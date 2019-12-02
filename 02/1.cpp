@@ -21,8 +21,29 @@ int main() {
 
     }
 
-    for(int i : parsedCsv) {
-        std::cout << i << std::endl;
+    
+
+    parsedCsv[1] = 12;
+    parsedCsv[2] = 2;
+
+    for(int i = 0; i < parsedCsv.size(); i++){
+        std::cout << "parsedCsv[i]: " << parsedCsv[i] << std::endl;
+        std::cout << "parsedCsv[i+3]: " << parsedCsv[i+3] << std::endl;
+        std::cout << "parsedCsv[parsedCsv[i+3]]: " << parsedCsv[parsedCsv[i+3]] << std::endl;
+        if(parsedCsv[i] == 1){
+            parsedCsv[parsedCsv[i+3]] = parsedCsv[i+1] + parsedCsv[i+2];
+            i += 4;
+        } else if (parsedCsv[i] == 2){
+            parsedCsv[parsedCsv[i+3]] = parsedCsv[i+1] * parsedCsv[i+2];
+            i += 4;
+        } else if (parsedCsv[i] == 99){
+            break;
+        } else {
+            std::cout << "Something went wrong!" << std::endl;
+            break;
+            
+        }
     }
     
+    std::cout << parsedCsv[0] << std::endl;
 }
