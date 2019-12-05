@@ -9,6 +9,7 @@ int getIntCodeOutput(std::vector<int> input) {
     int i = 0;
     std::vector<int> vals = input;
     int instruction = vals[i];
+    std::cout << "Instruction: " << instruction << std::endl;
     int opCode = instruction % 10;
     std::cout << "Op Code: " << opCode << std::endl;
     std::vector<int> parameterModes;
@@ -54,7 +55,8 @@ int main() {
 
     }
     
-    std::vector<int> testVals{1013};
+    std::vector<int> testVals;
+    testVals.push_back(1003);
     getIntCodeOutput(testVals);
     
 }
