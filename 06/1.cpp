@@ -27,7 +27,7 @@ class Planet {
     private:
     std::string name;
     Planet *orbit;
-}
+};
 
 int getOrbitCount(Planet planet) {
     int orbits = 0;
@@ -37,4 +37,15 @@ int getOrbitCount(Planet planet) {
         currentOrbit = currentOrbit->getOrbit();
     }
     return orbits;
+}
+
+
+int main(){
+    Planet a = Planet("a");
+    Planet b = Planet("b", &a);
+    Planet c = Planet("c", &b);
+
+    std::cout << getOrbitCount(a) << std::endl;
+    std::cout << getOrbitCount(b) << std::endl;
+    std::cout << getOrbitCount(c) << std::endl;
 }
