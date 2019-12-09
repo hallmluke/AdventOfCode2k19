@@ -31,7 +31,7 @@ int main()
             if(layers[i][j] == '0') {
                 //finalImage = finalImage + '0';
                 zeroes++;
-                break;
+      //          break;
             } else if(layers[i][j] == '1') {
                 //finalImage = finalImage
             }
@@ -40,6 +40,25 @@ int main()
             fewestZeroes = zeroes;
             fewestZeroesLayer = i;
         }
+    }
+    for(int i=0; i<layers[0].size(); i++) {
+            for(int j=0; j<layers.size(); j++) {
+                    std::cout << j << " " << i << std::endl;
+                    if(layers[j][i] == '0'){
+                            finalImage = finalImage + ' ';
+                            break;
+                    } else if(layers[j][i] == '1') {
+                            finalImage = finalImage + '1';
+                            break;
+                    }
+            }
+    }
+
+    for(int i=0; i<finalImage.size(); i++){
+            std::cout << finalImage[i];
+            if((i+1) % width == 0) {
+                    std::cout << std::endl;
+            }
     }
 
     int ones = 0;
