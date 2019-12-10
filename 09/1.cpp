@@ -23,7 +23,7 @@ void permute(std::string a, int l, int r) {
 
 class Amp {
     public:
-    Amp(std::vector<long long> _numbers, int _position = 0, int _phase = 0, int _input = 0) {
+    Amp(std::vector<long long> _numbers, int _position = 0, int _phase = 2, int _input = 2) {
         numbers = _numbers;
         position = _position;
         phase = _phase;
@@ -63,7 +63,7 @@ long long getIntCodeOutput(std::vector<Amp> amplifiers)//, int userInput, int ph
         }
 
         //parameterModes.pop_back();
-        std::cout << "Past param modes" << std::endl;
+        //std::cout << "Past param modes" << std::endl;
         std::vector<long long> parameters;
 
         if (parameterModes.size() == 0)
@@ -79,10 +79,10 @@ long long getIntCodeOutput(std::vector<Amp> amplifiers)//, int userInput, int ph
         for (int k = 0; k < parameterModes.size(); k++)
         {
             long long parameter = 0;
-            std::cout << "Param modes for loop" << std::endl;
+            //std::cout << "Param modes for loop" << std::endl;
             if (parameterModes[k] == 0)
             {
-std::cout << i << " " << k << " " << vals.size() << std::endl;
+//std::cout << i << " " << k << " " << vals.size() << std::endl;
                 if(vals[i + k + 1] < vals.size()) {
                 parameter = vals[vals[i + k + 1]];
                 }
@@ -92,14 +92,15 @@ std::cout << i << " " << k << " " << vals.size() << std::endl;
                             }
             else if (parameterModes[k] == 1)
             {
-std::cout << 1 << std::endl;
+//std::cout << 1 << std::endl;
                 //std::cout << "Assign param: " << vals[i + k + 1] << " i " << i << " k " << k << std::endl;
                 parameter = vals[i + k + 1];
                 
             }
             else if (parameterModes[k] == 2) {
- std::cout << 2 << std::endl;
-                parameter = vals[vals[i + k + 1 + relativeBase]];
+ //std::cout << 2 << std::endl;
+ //std::cout << i + k + 1 + relativeBase << std::endl;
+                parameter = vals[vals[i + k + 1] + relativeBase];
                
             }
             else
@@ -109,35 +110,54 @@ std::cout << 1 << std::endl;
             std::cout << "Parameter: " << parameter << std::endl;
             parameters.push_back(parameter);
         }
-        std::cout << "To opcode switch" << std::endl;
+        //std::cout << "To opcode switch" << std::endl;
         long long result;
+        std::cout << "i: " << i << std::endl;
         switch (opCode)
         {
         case 1:
             result = 0;
-            for (int j = 0; j < parameters.size(); j++)
-            {
+            //for (int j = 0; j < parameters.size(); j++)
+            //{
                 //                   std::cout << "Ading param: " << parameters[j] << "j" << j << std::endl;
-                result += parameters[j];
-            }
+                result = parameters[0] + parameters[1];
+            //}
+            if(parameters.size() > 2){
+                vals[vals[i+3]+relativeBase] = result;
+            } else {
+            std::cout << "Put " << result << " at " << vals[i+parameters.size()+1] << std::endl;
             vals[vals[i + parameters.size() + 1]] = result;
-            i += parameters.size() + 2;
+            }
+            i += 4;
             break;
         case 2:
             result = 1;
-            for (int j = 0; j < parameters.size(); j++)
-            {
-                result *= parameters[j];
+            //for (int j = 0; j < parameters.size(); j++)
+            //{
+                result = parameters[0]*parameters[1];
+            //}
+            if(parameters.size() > 2){
+                std::cout << "Place at " << vals[i+3]+relativeBase << std::endl;
+                vals[vals[i + 3] + relativeBase] = result;
+            } else {
+                vals[vals[i + parameters.size() + 1]] = result;
+                std::cout << "Put " << result << " at " << vals[i+parameters.size()+1] << std::endl;
             }
-            vals[vals[i + parameters.size() + 1]] = result;
-            i += parameters.size() + 2;
+            i+=4;
+            //i += parameters.size() + 2;
             break;
         case 3:
             //if(i == 0) {
              //   vals[vals[i + 1]] = phaseSetting;
             //} else {
-                vals[vals[i+1]] = amplifiers[currentAmplifier].phase;
-                amplifiers[currentAmplifier].phase = amplifiers[currentAmplifier].input;
+                if(parameterModes[0] == 2) {
+                    vals[vals[i+1]+relativeBase] = 2;//amplifiers[currentAmplifier].phase;
+                    std::cout << "Put 1 at " << vals[i+1]+relativeBase << std::endl;
+                } else {
+                    vals[vals[i+1]] = amplifiers[currentAmplifier].phase;
+                    amplifiers[currentAmplifier].phase = amplifiers[currentAmplifier].input;
+                    std::cout << "Put 1 at " << vals[i+1] << std::endl;
+                }
             //}
             i += 2;
             break;
@@ -152,17 +172,19 @@ std::cout << 1 << std::endl;
             {
                 programOutput = vals[vals[i + 1]];
             }
-            /*if (vals[i + 2] != 99 && programOutput != 0)
+            if (vals[i + 2] != 99 && programOutput != 0)
             {
                 std::cout << "ugh" << std::endl;
+                std::cout << programOutput << std::endl;
                 return -1;
-            } */
+            } 
+            std::cout << std::endl << "OUTPUT" << std::endl << programOutput << std::endl << std::endl;
             i += 2;
             amplifiers[currentAmplifier].position = i;
             amplifiers[currentAmplifier].numbers = vals;
 
             currentAmplifier = (currentAmplifier + 1) % 1;
-            std::cout << "Current amplifier " << currentAmplifier << std::endl;
+            //std::cout << "Current amplifier " << currentAmplifier << std::endl;
             i = amplifiers[currentAmplifier].position;
             vals = amplifiers[currentAmplifier].numbers;
 
@@ -174,20 +196,26 @@ std::cout << 1 << std::endl;
         case 5:
             if (parameters[0] != 0)
             {
+                std::cout << "Go to " << parameters[1] <<  " because " << parameters[0] << " is not 0" << std::endl;
                 i = parameters[1];
+                
             }
             else
             {
+                std::cout << "Op code 5 did nothing" << std::endl;
                 i += 3;
             }
             break;
         case 6:
             if (parameters[0] == 0)
             {
+                std::cout << "Go to " << parameters[1] <<  " because " << parameters[0] << " is 0" << std::endl;
                 i = parameters[1];
+                
             }
             else
             {
+                std::cout << "Op code 6 did nothing" << std::endl;
                 i += 3;
             }
             break;
@@ -199,14 +227,27 @@ std::cout << 1 << std::endl;
                 //  } else {
                 //          vals[vals[i+3]] = 1;
                 //  }
+                if(parameters.size() > 2){
+                    vals[vals[i+3] + relativeBase] = 1;
+                    std::cout << "Set " << vals[i+3]+relativeBase << " to 1 because " << parameters[0] << " < " << parameters[1] << std::endl;
+                } 
+                else {
                 vals[vals[i + 3]] = 1;
+                std::cout << "Set " << vals[i+3] << " to 1 because " << parameters[0] << " < " << parameters[1] << std::endl;
+                }
             }
             else
             {
                 //  if(parameters.size() > 2){
                 //          vals[parameters[2]] = 0;
                 //  } else {
+                if(parameters.size() > 2){
+                    vals[vals[i+3] + relativeBase] = 0;
+                    std::cout << "Set " << vals[i+3]+relativeBase << " to 0 because " << parameters[0] << " < " << parameters[1] << std::endl;
+                }  else {
                 vals[vals[i + 3]] = 0;
+                std::cout << "Set " << vals[i+3] << " to 0 because " << parameters[0] << " !< " << parameters[1] << std::endl;
+                }
                 //       }
             }
             i += 4;
@@ -217,16 +258,24 @@ std::cout << 1 << std::endl;
                 //       if(parameters.size() > 2){
                 //             vals[parameters[2]] = 1;
                 //    } else {
+                    if(parameters.size() > 2) {
+                        vals[vals[i+3] + relativeBase] = 1;
+                        std::cout << "Set " << vals[i+3]+relativeBase << " to 1 because " << parameters[0] << " == " << parameters[1] << std::endl;
+                    } else {
                 vals[vals[i + 3]] = 1;
+                std::cout << "Set " << vals[i+3] << " to 1 because " << parameters[0] << " == " << parameters[1] << std::endl;
+                    }
             }
             else
             {
+                std::cout << "Set " << vals[i+3] << " to 0 because " << parameters[0] << " != " << parameters[1] << std::endl;
                 vals[vals[i + 3]] = 0;
             }
             i += 4;
             break;
         case 9:
             relativeBase += parameters[0];
+            std::cout << "Relative Base: " << relativeBase << std::endl;
             i += 2;
             break;
         case 99:
@@ -265,7 +314,7 @@ std::cout << 1 << std::endl;
 int main()
 {
 
-    std::ifstream file("testinput3.txt");
+    std::ifstream file("input.txt");
     std::string str;
     std::vector<long long> parsedCsv;
     while (std::getline(file, str))
