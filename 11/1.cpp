@@ -470,7 +470,9 @@ int main() {
 
         auto panels = paintingRobot.paintedPanels;
         for(auto it = panels.begin(); it != panels.end(); it++) {
-                std::cout << "(" << it->first[0] << ", " << it->first[1] << "): " << it->second << std::endl;
+                if(it->second == 1){
+                std::cout << "(" << it->first[0] << ", " << it->first[1] << "),";
+                }
         }
         std::cout << panels.size() << std::endl;
 }
