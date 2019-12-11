@@ -10,6 +10,7 @@ class Robot {
            Robot(int _facing = 90, std::array<int, 2> _position = {0, 0}) {
                 facing = _facing;
                 position = _position;
+                paintedPanels[position] = 1;
            }
            int facing;
            std::array<int, 2> position;
@@ -62,16 +63,18 @@ class Robot {
 
 class Amp {
     public:
-    Amp(std::vector<long long> _numbers, int _position = 0, int _phase = 1, int _input = 0) {
+    Amp(std::vector<long long> _numbers, int _position = 0, int _phase = 1, int _input = 0, int _relativeBase = 0) {
         numbers = _numbers;
         position = _position;
         phase = _phase;
         input = _input;
+        relativeBase = _relativeBase;
     }
     std::vector<long long> numbers;
     int position;
     int phase;
     int input;
+    int relativeBase;
 };
 
 long long getIntCodeOutput(std::vector<Amp>& amplifiers, bool debug)
@@ -83,7 +86,7 @@ long long getIntCodeOutput(std::vector<Amp>& amplifiers, bool debug)
     vals.resize(10000);
     int currentAmplifier = 0;
     long long programOutput = 0;
-    int relativeBase = 0;
+    int relativeBase = amplifiers[0].relativeBase;
 
     while (i < vals.size())
     {
@@ -239,6 +242,7 @@ long long getIntCodeOutput(std::vector<Amp>& amplifiers, bool debug)
             i += 2;
             amplifiers[currentAmplifier].position = i;
             amplifiers[currentAmplifier].numbers = vals;
+            amplifiers[currentAmplifier].relativeBase = relativeBase;
 
             currentAmplifier = (currentAmplifier + 1) % 1;
             //std::cout << "Current amplifier " << currentAmplifier << std::endl;
@@ -256,10 +260,16 @@ long long getIntCodeOutput(std::vector<Amp>& amplifiers, bool debug)
         case 5:
             if (parameters[0] != 0)
             {
+                /*if(parameterModes[1] == 2) {
+                        i = vals[i+2]+relativeBase;
+                        
+                        std::cout << "Go to " << vals[i+1]+relativeBase << std::endl;
+                } else {*/
                 if(debug){
                 std::cout << "Go to " << parameters[1] <<  " because " << parameters[0] << " is not 0" << std::endl;
                 }
                 i = parameters[1];
+                //}
                 
             }
             else
@@ -273,10 +283,19 @@ long long getIntCodeOutput(std::vector<Amp>& amplifiers, bool debug)
         case 6:
             if (parameters[0] == 0)
             {
+                /*if(parameterModes[1] == 2){
+
+                        i = vals[i+2] + relativeBase;
+                        std::cout << vals[i+1] << std::endl;
+                        std::cout << relativeBase << std::endl;
+                        std::cout << vals[i+2] << std::endl;
+                        std::cout << "Go to " << i << std::endl;
+                } else {*/
                 if(debug){
                 std::cout << "Go to " << parameters[1] <<  " because " << parameters[0] << " is 0" << std::endl;
                 }
                 i = parameters[1];
+                //}
                 
             }
             else
@@ -296,6 +315,8 @@ long long getIntCodeOutput(std::vector<Amp>& amplifiers, bool debug)
                 //          vals[vals[i+3]] = 1;
                 //  }
                 if(parameters.size() > 2){
+                    std::cout << "vals[i+3] " << vals[i+3] << std::endl;
+                    std::cout << "Relative base: " << relativeBase;
                     vals[vals[i+3] + relativeBase] = 1;
                     if(debug){
                     std::cout << "Set " << vals[i+3]+relativeBase << " to 1 because " << parameters[0] << " < " << parameters[1] << std::endl;
@@ -355,7 +376,7 @@ long long getIntCodeOutput(std::vector<Amp>& amplifiers, bool debug)
             break;
         case 9:
             relativeBase += parameters[0];
-        //    std::cout << "Relative Base: " << relativeBase << std::endl;
+            std::cout << "Relative Base: " << relativeBase << std::endl;
             i += 2;
             break;
         case 99:
@@ -416,13 +437,13 @@ int main() {
         Robot paintingRobot = Robot();
         int output = 0;
         while(output != -1){
-                output = getIntCodeOutput(amplifiers, false);
+                output = getIntCodeOutput(amplifiers, true);
                 if(output == -1){
                         break;
                 }
                 int color = output;
                 std::cout << "COLOR: " << color << std::endl;
-                output = getIntCodeOutput(amplifiers, false);
+                output = getIntCodeOutput(amplifiers, true);
                 if(output == -1){
                         break;
                 }
