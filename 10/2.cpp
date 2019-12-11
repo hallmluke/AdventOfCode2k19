@@ -8,6 +8,7 @@
 #include <bits/stdc++.h>
 #include <functional>
 #include <map>
+#include <algorithm>
 
 using namespace std::placeholders;
 
@@ -25,7 +26,7 @@ bool compareDist(std::array<int, 2> originPoint, std::array<int, 2> pointOne, st
 }
 
 double getAngle(std::array<int, 2> pointOne, std::array<int, 2> pointTwo) {
-       return std::atan2(pointOne[1] - pointTwo[1], pointOne[0] - pointTwo[0]);
+       return std::atan2(pointTwo[1] - pointOne[1], pointOne[0] - pointTwo[0]);
 }
 
 int main() {
@@ -82,4 +83,43 @@ int main() {
     }
     std::cout << maxVisible << std::endl;
     std::cout << bestCoord[0] << ", " << bestCoord[1] << std::endl;
-}
+    asteroidCoords.erase(std::remove(asteroidCoords.begin(), asteroidCoords.end(), bestCoord), asteroidCoords.end());
+
+    std::sort(asteroidCoords.begin(), asteroidCoords.end(), std::bind(compareDist, bestCoord, _1, _2));
+        int counter = 0;
+
+    std::array<int, 2> twoHCoord;
+    while(counter < 200) {
+        std::map<double, std::array<int, 2>> angles;
+        for(int i=0; i<asteroidCoords.size(); i++) {
+                //double angle = getAngle(bestCoord, asteroidCoords[i]);
+                double angle = getAngle(asteroidCoords[i], bestCoord);
+                std::cout << "(" << asteroidCoords[i][0] << ", " << asteroidCoords[i][1] << ") " << angle << std::endl;
+                if (angle > M_PI / 2 ) {
+                     angle -= M_PI * 2;
+                     std::cout << "Adjusted angle " << angle << std::endl;
+                }
+                auto angleItr = angles.find(angle);
+                if(angleItr == angles.end()) {
+                     //std::cout << "Adding to visible asteroids" << std::endl;
+                     angles.insert({ angle, asteroidCoords[i] });
+                } else {
+                     std::cout << "Blocked" << std::endl;
+                }
+        }
+        //std::map<double, std::array<int,2>>::iterator it;
+        for( auto it = --angles.end(); it != angles.begin(); it-- ) {
+                std::cout << "Deleting at angle " << it->first << " asteroid at (" << it->second[0] << ", " << it->second[1] << ")" << std::endl;
+                asteroidCoords.erase(std::remove(asteroidCoords.begin(), asteroidCoords.end(), it->second), asteroidCoords.end());
+                counter++;
+                if(counter == 200) {
+                        twoHCoord = it->second;
+                }
+        }
+    }
+
+    std::cout << counter << std::endl;
+    std::cout << twoHCoord[0]*100+twoHCoord[1] << std::endl;
+  }
+//}
+
