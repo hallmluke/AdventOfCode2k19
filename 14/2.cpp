@@ -40,7 +40,7 @@ void trim(std::string &s) {
 
 
 void parseInput(std::map<std::string, Reaction>& reactions){
-    std::ifstream file("testinput2.txt");
+    std::ifstream file("input.txt");
     std::string str;
     while (std::getline(file, str))
     {
@@ -85,11 +85,11 @@ void parseInput(std::map<std::string, Reaction>& reactions){
 
 }
 
-long long getOreCount(std::map<std::string, Reaction> reactions, std::string chemical, int quantity, std::map<std::string, int>& stockpile) {
+long long getOreCount(std::map<std::string, Reaction> reactions, std::string chemical, long long quantity, std::map<std::string, long long>& stockpile) {
         std::string ore = "ORE";
 
         auto pileItr = stockpile.find(chemical);
-        int stockpiledChem = 0;
+        long long stockpiledChem = 0;
         if(pileItr != stockpile.end()) {
                 stockpiledChem = pileItr->second;
         } else {
@@ -100,7 +100,7 @@ long long getOreCount(std::map<std::string, Reaction> reactions, std::string che
         //std::cout << reactions[chemical].materials[0] << std::endl;
         Reaction scaledReaction = reactions[chemical];
                 while(quantity > scaledReaction.chemicalQuantity + stockpiledChem) {
-                     int ratio = std::ceil(((double) (quantity - stockpiledChem) / ((double) scaledReaction.chemicalQuantity)));
+                     long long ratio = std::ceil(((long double) (quantity - stockpiledChem) / ((long double) scaledReaction.chemicalQuantity)));
                      if (ratio < 1) {
                         scaledReaction.print();
                         std::cout << "Ratio: " << ratio << std::endl;
@@ -114,7 +114,7 @@ long long getOreCount(std::map<std::string, Reaction> reactions, std::string che
                      for(int i=0; i<scaledReaction.materials.size(); i++) {
                         scaledReaction.materialQuantities[i] = ratio * reactions[chemical].materialQuantities[i];
                      }
-                     //scaledReaction.print();
+                     scaledReaction.print();
                 }
                 //std::cout << "Scaled Reaction: ";
                 //scaledReaction.print();
@@ -125,7 +125,7 @@ long long getOreCount(std::map<std::string, Reaction> reactions, std::string che
                         std::cout << "Chemical: " << chemical << std::endl;
                         throw;
                 }
-                //std::cout << "Stockpile of " << chemical << ": " << stockpile[chemical] << std::endl;
+                std::cout << "Stockpile of " << chemical << ": " << stockpile[chemical] << std::endl;
 
         if(reactions[chemical].materials[0] == ore) {
           //      std::cout << "Found ore" << std::endl;
@@ -146,7 +146,7 @@ long long getOreCount(std::map<std::string, Reaction> reactions, std::string che
 
 int main() {
         std::map<std::string, Reaction> reactions;
-        std::map<std::string, int> stockpile;
+        std::map<std::string, long long> stockpile;
         parseInput(reactions);
         reactions["FUEL"].print();
         long long oreCount = getOreCount(reactions, "FUEL", 1, stockpile);
@@ -154,9 +154,9 @@ int main() {
         std::cout << oreCount << std::endl;
         std::cout << target / oreCount << std::endl;
         long long low = target / oreCount;
-        long long high = low * 10;
+        long long high = low * 2;
         while(low + 1 < high) {
-                std::map<std::string, int> testpile;
+                std::map<std::string, long long> testpile;
                 long long mid = (low + high)/2;
                 oreCount = getOreCount(reactions, "FUEL", mid, testpile);
                 if(oreCount > target) {
@@ -171,7 +171,7 @@ int main() {
                 //std::cout << getOreCount(reactions, "FUEL", high, testpile) << std::endl;
         }
         std::map<std::string, int> testpile;
-        std::cout << getOreCount(reactions, "FUEL", 1, testpile) << std::endl;
+        //std::cout << getOreCount(reactions, "FUEL", 1, testpile) << std::endl;
         std::cout << low << " " << high << std::endl;
 }
 
