@@ -498,6 +498,7 @@ class RepairDroid {
        std::set<Point> secondvisit;
        void BFS(){
            std::queue<Point> queue;
+           position = oxygen;
            queue.push(position);
            while(!queue.empty()){
                position = queue.front();
@@ -530,19 +531,19 @@ class RepairDroid {
                 if(visitedItr == secondvisit.end() && wallsItr == wallsHit.end()) {
                     queue.push(target);
                     parent[target] = position;
-                    if(target == oxygen){
+                    /*if(target == oxygen){
                         //std::cout << "Found tank" << std::endl;
                         break;
-                    }
+                    }*/
                 }
            }
 
            }
 
-           Point next = oxygen;
+           Point next = position;
            Point start = Point(0,0);
            int steps = 0;
-           while(next != start){
+           while(next != oxygen){
                //std::cout << next.Stringify() << "->";
                next = parent[next];
                
